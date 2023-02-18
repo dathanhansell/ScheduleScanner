@@ -30,7 +30,7 @@ def preprocess_image(image_path):
 config = r'--oem 3 --psm 6 -c tessedit_char_whitelist=0123456789/:AMPMAm'
 
 def replace_characters(text):
-     # Replace all periods and similar characters with colons
+    # Replace all periods and similar characters with colons
     text = re.sub(r'[.;,|/\\]+', ':', text)
 
     # Replace all exclamation points with I
@@ -38,6 +38,9 @@ def replace_characters(text):
 
     # Remove lines with no characters
     text = '\n'.join([line for line in text.split('\n') if len(line.strip()) > 0])
+
+    # Remove substrings with length less than 3, except for "am" or "pm"
+    text = '\n'.join([' '.join([word for word in line.split() if len(word) >= 3 or word in ['am', 'pm']]) for line in text.split('\n')])
 
     return text
 

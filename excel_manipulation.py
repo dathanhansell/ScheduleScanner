@@ -23,12 +23,12 @@ def parse_schedule(schedule_data):
                 end_time = match.group(3)
                 current_schedule.append({'name': name, 'start_time': start_time, 'end_time': end_time, 'date': current_day})
             else:
-                current_schedule.append({'name': 'ERROR', 'start_time': 'ERROR', 'end_time': 'ERROR', 'date': 'ERROR'})
+                current_schedule.append({'name': match, 'start_time': 'ERROR', 'end_time': 'ERROR', 'date': 'ERROR'})
 
     return schedules_by_day
 def filter_schedule_by_worker(schedule_by_day, worker_name):
     for day, schedule in schedule_by_day.items():
-        filtered_schedule = list(filter(lambda shift: shift['name'] == worker_name, schedule))
+        filtered_schedule = list(filter(lambda shift: any(substring.lower() in shift['name'].lower() for substring in worker_name.split()), schedule))
         schedule_by_day[day] = filtered_schedule
     return schedule_by_day
 
