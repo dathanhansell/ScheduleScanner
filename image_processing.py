@@ -5,7 +5,7 @@ import os
 from pytesseract import Output
 import numpy as np
 import re
-
+'''
 def preprocess_image(image_path):
     # Load image
     img = cv2.imread(image_path)
@@ -26,27 +26,29 @@ def preprocess_image(image_path):
     thresh = cv2.threshold(edges, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
 
     return thresh
+'''
+
+def preprocess_image(image_path):
+    
+    img = cv2.imread(image_path)
+    
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    filtered = cv2.bilateralFilter(gray, 5, 75, 75)
+    thresh = cv2.adaptiveThreshold(filtered, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 8)
+    thresh = cv2.bitwise_not(thresh)
+    
+    
+
+    
+    return thresh
 
 config = r'--oem 3 --psm 6 -c tessedit_char_whitelist=0123456789/:AMPMAm'
 
-def replace_characters(text):
-    # Replace all periods and similar characters with colons
-    text = re.sub(r'[.;,|/\\]+', ':', text)
-
-    # Replace all exclamation points with I
-    text = text.replace('!', 'I')
-
-    # Remove lines with no characters
-    text = '\n'.join([line for line in text.split('\n') if len(line.strip()) > 0])
-
-    # Remove substrings with length less than 3, except for "am" or "pm"
-    text = '\n'.join([' '.join([word for word in line.split() if len(word) >= 3 or word in ['am', 'pm']]) for line in text.split('\n')])
-
-    return text
-
 def extract_text(image_path):
+    
     try:
         filename = os.path.split(image_path)[1]
+        print(f"Reading:",filename)
         # Preprocess image
         image = preprocess_image(image_path)
        
@@ -61,8 +63,6 @@ def extract_text(image_path):
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
         
         cv2.imwrite("cv_debug/"+filename,image)
-        text = replace_characters(text)
-        print(text)
         return text
     except Exception as e:
         print(f"Error processing image: {e}")
