@@ -55,16 +55,14 @@ def parse_schedule(schedule_string):
             worker_match = re.search(r'([A-Z\s]+)\s+(\d+):(\d+)\s+([ap]m)\s+(\d+):(\d+)\s+([ap]m)', line)
             if worker_match:
                 name = worker_match.group(1).strip()
-                start_hour = int(worker_match.group(2))
+                start_hour = reconcile_ones(int(worker_match.group(2)))
                 start_ampm = worker_match.group(4)
-                end_hour = int(worker_match.group(5))
+                end_hour = reconcile_ones(int(worker_match.group(5)))
                 end_ampm = worker_match.group(7)
                 
-                if end_ampm == 'pm':
-                    if end_hour > 11:
-                        end_hour = 11
-                        
-                        
+                if start_ampm == "am" and start_hour <8:
+                    start_hour = 8
+ 
                 start_time = str(start_hour)+':00 '+start_ampm
                 end_time = str(end_hour)+':00 '+end_ampm
                 current_schedule.append({
@@ -73,8 +71,15 @@ def parse_schedule(schedule_string):
                     'end_time': end_time if end_time else 'ERROR',
                     'date': date.strftime('%B %d %Y') if date else 'ERROR'
                 })
+    return schedules_by_day  
     
-    return schedules_by_day
+def reconcile_ones(hour):
+        if hour == 40:
+            hour = 10
+        elif hour == 14 or hour == 41:
+            hour = 11
+        return hour
+      
 
 def filter_schedule_by_worker(schedule_by_day, worker_name):
     for day, schedule in schedule_by_day.items():
