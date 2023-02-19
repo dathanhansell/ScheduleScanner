@@ -91,8 +91,10 @@ def sanitize(value):
 
 def write_to_excel(schedule_by_day, output_file):
     try:
-        
-        schedule_by_day = filter_schedule_by_worker(schedule_by_day, "HANNAH SWIECKI")
+        print("If you want to filter by employee name (otherwise enter nothing): ")
+        name = input()
+        if name:
+            schedule_by_day = filter_schedule_by_worker(schedule_by_day, str.upper(name))
         # Create an empty list to hold the rows of the final output
         rows = []
 
