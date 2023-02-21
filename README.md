@@ -10,4 +10,4 @@ The program will output debug images of the opencv process to show the processed
 
 <img src="exampledebug.jpg" width="300" >
 
-There's also a script called ical.py that if you run it will create an ical file of the excel file in your schedule folder so you can import it into your favorite calendar app.
+Finally after the excel file is created the ical.py script will parse the excel file and export an ical file for calendar import
